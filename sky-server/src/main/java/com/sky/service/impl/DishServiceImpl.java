@@ -3,6 +3,7 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
@@ -108,17 +109,26 @@ public class DishServiceImpl implements DishService {
         dishMapper.update(dish);
 
         //更新菜品口味信息
-        //先删除菜品口味信息
-        dishFlavorMapper.deleteById(dishDTO.getId());
-        //再保存菜品口味信息
-        List<DishFlavor> flavors = dishDTO.getFlavors();
-        if(flavors!=null && flavors.size()>0){
-            //更新菜品id
-            flavors.forEach(flavor -> {
-                flavor.setDishId(dishDTO.getId());
-            });
+            //先删除菜品口味信息
+            dishFlavorMapper.deleteById(dishDTO.getId());
+            //再保存菜品口味信息
+            List<DishFlavor> flavors = dishDTO.getFlavors();
+            if(flavors!=null && flavors.size()>0){
+                //更新菜品id
+                flavors.forEach(flavor -> {
+                    flavor.setDishId(dishDTO.getId());
+                });
 
-            dishFlavorMapper.insertBatch(flavors);
-        }
+                dishFlavorMapper.insertBatch(flavors);
+            }
+    }
+
+    @Override
+    public List<Dish> list(Long categoryId) {
+        Dish dish = Dish.builder()
+                .categoryId(categoryId)
+                .status(StatusConstant.ENABLE)
+                .build();
+        return dishMapper.list(dish);
     }
 }
