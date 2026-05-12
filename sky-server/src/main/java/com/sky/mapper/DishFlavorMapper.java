@@ -9,4 +9,10 @@ import java.util.List;
 public interface DishFlavorMapper {
 
     void saveFlavors(List<DishFlavor> dishFlavors);
+
+    /**
+     * 批量删除菜品口味
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }
