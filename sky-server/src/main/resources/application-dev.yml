@@ -8,7 +8,7 @@ sky:
     password: '070625'
 
   alioss:
-    access-key-id: your_access_key_here
-    access-key-secret: your_secret_key_here
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:your_access_key_here}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:your_secret_key_here}
     bucket-name: sky-canl
     endpoint: oss-cn-beijing.aliyuncs.com
