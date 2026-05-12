@@ -17,6 +17,7 @@ import com.sky.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,8 +33,9 @@ public class DishServiceImpl implements DishService {
     @Autowired
     private DishMealMapper dishMealMapper;
 
+    @Transactional
     @Override
-    public void save(DishDTO dishDTO) {
+    public void saveWithFlavor(DishDTO dishDTO) {
         //保存菜品基本信息到菜品表
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO,dish);
@@ -49,7 +51,7 @@ public class DishServiceImpl implements DishService {
                 flavor.setDishId(dishId);
             });
         }
-        dishFlavorMapper.saveFlavors(flavors);
+        dishFlavorMapper.insertBatch(flavors);
 
     }
 
@@ -60,6 +62,7 @@ public class DishServiceImpl implements DishService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    @Transactional
     @Override
     public void deleteBatch(List<Long> ids) {
         //起售不能删
@@ -80,5 +83,42 @@ public class DishServiceImpl implements DishService {
         //删除菜品口味信息
         dishFlavorMapper.deleteBatch(ids);
 
+    }
+
+    @Override
+    public DishVO getDishWithFlavor(Long id) {
+        //查询菜品基本信息
+        Dish dish = dishMapper.selectById(id);
+
+        //查询菜品口味信息
+        List<DishFlavor> flavors = dishFlavorMapper.selectByDishId(id);
+        //封装成DishVO返回
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish,dishVO);
+        dishVO.setFlavors(flavors);
+        return dishVO;
+    }
+
+    @Transactional
+    @Override
+    public void updateWithFlavor(DishDTO dishDTO) {
+        //更新菜品基本信息
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO,dish);
+        dishMapper.update(dish);
+
+        //更新菜品口味信息
+        //先删除菜品口味信息
+        dishFlavorMapper.deleteById(dishDTO.getId());
+        //再保存菜品口味信息
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if(flavors!=null && flavors.size()>0){
+            //更新菜品id
+            flavors.forEach(flavor -> {
+                flavor.setDishId(dishDTO.getId());
+            });
+
+            dishFlavorMapper.insertBatch(flavors);
+        }
     }
 }
