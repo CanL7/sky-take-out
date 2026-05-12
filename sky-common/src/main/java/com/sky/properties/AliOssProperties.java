@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class AliOssProperties {
 
+    //从配置类中获取属性
     private String endpoint;
     private String accessKeyId;
     private String accessKeySecret;
