@@ -93,7 +93,7 @@ public class DishServiceImpl implements DishService {
         Dish dish = dishMapper.selectById(id);
 
         //查询菜品口味信息
-        List<DishFlavor> flavors = dishFlavorMapper.selectByDishId(id);
+        List<DishFlavor> flavors = dishFlavorMapper.getByDishId(id);
         //封装成DishVO返回
         DishVO dishVO = new DishVO();
         BeanUtils.copyProperties(dish,dishVO);
@@ -150,5 +150,14 @@ public class DishServiceImpl implements DishService {
         }
 
         return dishVOList;
+    }
+
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
     }
 }

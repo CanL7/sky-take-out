@@ -24,7 +24,7 @@ public interface DishFlavorMapper {
      * @return
      */
     @Select("select * from dish_flavor where dish_id = #{id}")
-    List<DishFlavor> selectByDishId(Long id);
+    List<DishFlavor> getByDishId(Long id);
 
     /**
      * 根据菜品id删除菜品口味信息
