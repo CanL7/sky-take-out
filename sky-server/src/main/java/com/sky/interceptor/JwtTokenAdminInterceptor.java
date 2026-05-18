@@ -53,6 +53,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
             return true;
         } catch (Exception ex) {
             //4、不通过，响应401状态码
+            System.out.println("过期了 自己换 " + ex.getMessage());
             response.setStatus(401);
             return false;
         }
